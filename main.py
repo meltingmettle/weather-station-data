@@ -53,6 +53,8 @@ class DataHelper:
 
         return row
 
+################################################################################
+
 hq = Headquarters()
 
 with open('data.csv', newline='') as csvfile:
@@ -68,4 +70,4 @@ with open('data.csv', newline='') as csvfile:
             new_station = hq.add_station(station_id, data_point)
             new_station.add_data(data_point)
 
-print("Ready
+print("Ready to go!")
