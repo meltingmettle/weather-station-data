@@ -10,7 +10,7 @@ class Headquarters:
 
     def already_has(self, station_id):
         return station_id in self.stations
-
+      
     ############### SCREENING QUESTION METHODS #################################
 
 
@@ -56,7 +56,7 @@ class DataHelper:
 
     def temperature(data_point):
         return data_point[2]
-
+      
     def parse(row):
         # >>> row = ['2, 2020.123, 4']
         # >>> parse(row)
@@ -79,8 +79,6 @@ class DataHelper:
         print("The lowest temperature recorded is " + str(temperature_c) + " Celsius, recorded at Station " + str(station_id) + " on " + str(date))
         return {"Station ID:": station_id, "Date:": date}
 
-################################################################################
-
 hq = Headquarters()
 
 with open('data.csv', newline='') as csvfile:
@@ -98,5 +96,4 @@ with open('data.csv', newline='') as csvfile:
             new_station = hq.add_station(station_id, data_point)
             new_station.add_data(data_point)
 
-print(DataHelper.lowest_temperature())
 print("Ready to go!")
