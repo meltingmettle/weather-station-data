@@ -13,6 +13,21 @@ class Headquarters:
 
     ############### SCREENING QUESTION METHODS #################################
 
+    def lowest_temperature(self):
+        lowest_temperature_station_id = None
+        lowest_temperature_date = -1
+        lowest_temperature = float('inf')
+
+        for station_id in self.stations:
+            station = self.get_station(station_id)
+            local_lowest, local_date = station.find_lowest_temperature_and_date()
+            if local_lowest < lowest_temperature:
+                lowest_temperature = local_lowest
+                lowest_temperature_date = local_date
+                lowest_temperature_station_id = station_id
+
+        print("The lowest temperature recorded is " + str(lowest_temperature) + " Celsius, recorded at Station " + str(lowest_temperature_station_id) + " on " + str(lowest_temperature_date))
+        return {"Station ID:": lowest_temperature_station_id, "Date:": lowest_temperature_date}
 
 
     # OOP solutions just for fun
@@ -53,8 +68,22 @@ class Station:
         self.fluctuation += abs(DataHelper.temperature(data_point))
         self.station_data.append(data_point)
 
+    def get_station_data(self):
+        return self.station_data
+
     def get_fluctuation(self):
         return self.fluctuation
+
+    def find_lowest_temperature_and_date(self):
+        lowest_temperature = float('inf')
+        lowest_temperature_date = 0
+
+        for data_point in self.station_data:
+            data_temperature = DataHelper.temperature(data_point)
+            if data_temperature < lowest_temperature:
+                lowest_temperature = data_temperature
+                lowest_temperature_date = DataHelper.date(data_point)
+        return lowest_temperature, lowest_temperature_date
 
     def __repr__(self):
         return "Station " + str(int(self.station_id))
@@ -115,6 +144,10 @@ with open('data.csv', newline='') as csvfile:
             new_station = hq.add_station(station_id, data_point)
             new_station.add_data(data_point)
 
+
+print(hq.lowest_temperature())
+print("OOP Solutions")
 print(hq.lowest_temperature_oop_solution())
 print(hq.fluctuation_station_oop_solution())
+
 print("Ready to go!")
