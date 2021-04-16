@@ -1,23 +1,3 @@
-import csv
-import pdb
-
-class SolutionsAPI:
-    def part_1():
-        return hq.fetch_lowest_temperature_station_date()
-
-    def part_2():
-        return hq.fetch_highest_fluctuation_station_id()
-
-    def part_3(start, end):
-        # TODO add error handling/input validation
-        return hq.fetch_highest_fluctuation_station_id(start, end)
-
-    def part_1_v1():
-        return hq.lowest_temperature_oop_solution()
-
-    def part_2_v1():
-        return hq.fluctuation_station_oop_solution()
-
 class Headquarters:
     def __init__(self):
         self.stations = {}
@@ -55,7 +35,7 @@ class Headquarters:
         if highest_fluctuation.station_id == -1:
             print("No data collected from the time window between " + str(start) + " and " + str(end))
             return None
-            
+
         print("Station " + str(highest_fluctuation.station_id) + " saw the most temperature fluctuation of " + str(highest_fluctuation.value) + " between the dates of " + str(highest_fluctuation.start) + " and " + str(highest_fluctuation.end))
         return highest_fluctuation.station_id
 
@@ -164,6 +144,7 @@ class DataHelper:
 
         return Point(row)
 
+    # Import consumers for Part 1's import solution
     def consider_lowest(point):
         if point.temperature < DataHelper.lowest_recorded_point.temperature:
             DataHelper.lowest_recorded_point = point
@@ -177,35 +158,3 @@ class DataHelper:
 
         print("The lowest temperature recorded is " + str(temperature_c) + " Celsius, recorded at Station " + str(station_id) + " on " + str(date))
         return {"Station ID:": station_id, "Date:": date}
-
-################################################################################
-
-hq = Headquarters()
-
-with open('data.csv', newline='') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-    next(csvreader)
-    print("Importing data...")
-    for row in csvreader:
-        point = DataHelper.pointify(row)
-
-        hq.add_point(point)
-
-        # 'sidecar-consumer' for Part 1's OOP solution
-        DataHelper.consider_lowest(point)
-
-print("Ready to go!")
-
-
-############ FOR TESTING CONVINIENCE, NOT PRODUCTIONIZABLE #####################
-while True:
-    part = input("Type a number between 1-3 to run the Part's corresponding method:")
-
-    if int(part) == 1:
-        SolutionsAPI.part_1()
-    elif int(part) == 2:
-        SolutionsAPI.part_2()
-    elif int(part) == 3:
-        start = input("Please input a correctly-formatted start date: ")
-        end = input("Please input a correctly-formatted end date: ")
-        SolutionsAPI.part_3(float(start), float(end))
