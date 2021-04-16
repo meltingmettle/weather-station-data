@@ -23,9 +23,24 @@ class Headquarters:
 
         return {"Station ID:": lowest_recorded.station_id, "Date:":lowest_recorded.date}
 
-    # OOP solutions
+    # Assume that the data is not sorted.
+    # I could also have stored the data in sorted arrays but the benefits would be only marginally worth the additional complexity
+    def fetch_highest_fluctuation_station_id(self, start=0, end=2022.000):
+        highest_fluctuation = Fluctuation(-1, start, end, 0)
+
+        for station in self.stations.values():
+            station_fluctuation = station.fluctuation_over_window(start, end)
+
+            if station_fluctuation.is_higher_than(highest_fluctuation) and station_fluctuation.is_over_the_same_window_as(highest_fluctuation):
+                highest_fluctuation = station_fluctuation
+
+        print("Station " + str(highest_fluctuation.station_id) + " saw the most temperature fluctuation of " + str(highest_fluctuation.value) + " between the dates of " + str(highest_fluctuation.start) + " and " + str(highest_fluctuation.end))
+        return highest_fluctuation.station_id
+
+    # Import-based solutions for Part 1 and Part 2
 
     # A simple solution which measures the lowest temperature as data is imported
+    # Re-implemented with an actual algorithm above
     def lowest_temperature_oop_solution(self):
         return DataHelper.lowest_temperature_station_date()
 
@@ -65,9 +80,10 @@ class Headquarters:
 
 class Station:
     def __init__(self, station_id):
-        self.station_id     = int(station_id)
-        self.station_data   = []
-        self.fluctuation    = 0
+        self.station_id           = int(station_id)
+        self.station_data         = []
+        # Instance attribute for the Part 2's import-based solution
+        self.fluctuation          = 0
 
     def add_data(self, point):
         self.fluctuation += abs(point.temperature)
@@ -77,13 +93,23 @@ class Station:
         return self.station_data
 
     def find_lowest_temperature_and_date(self):
-        lowest_recorded_point = Point([-1, -1, float('inf')])
+        lowest_recorded_point = Point()
 
         for point in self.station_data:
             if point.temperature < lowest_recorded_point.temperature:
                 lowest_recorded_point = point
 
         return lowest_recorded_point
+
+    def fluctuation_over_window(self, start, end):
+        aggregate_fluctuation = 0
+
+        for point in self.station_data:
+            if start < point.date < end:
+                aggregate_fluctuation += abs(point.temperature)
+
+        self.windowed_fluctuation = Fluctuation(self.station_id, start, end, aggregate_fluctuation)
+        return self.windowed_fluctuation
 
     def __repr__(self):
         return "Station " + str(int(self.station_id))
@@ -92,14 +118,27 @@ class Station:
         return "Station " + str(int(self.station_id))
 
 class Point:
-    def __init__(self, data_point):
+    def __init__(self, data_point=[-1, -1, float('inf')]):
         self.station_id  =   data_point[0]
         self.date        =   data_point[1]
         self.temperature =   data_point[2]
 
+# This is beyond overkill for what we're doing right now, but it's much more extendable
+class Fluctuation:
+    def __init__(self, station_id, start, end, value):
+        self.station_id = station_id
+        self.start      = start
+        self.end        = end
+        self.value      = value
+
+    def is_higher_than(self, second_fluctuation):
+        return self.value > second_fluctuation.value
+
+    def is_over_the_same_window_as(self, second_fluctuation):
+        return self.start == second_fluctuation.start and self.end == second_fluctuation.end
 
 class DataHelper:
-    lowest_recorded_point = Point([-1, -1, float('inf')])
+    lowest_recorded_point = Point()
 
     def pointify(row):
         row = row[0].split(',')
@@ -128,6 +167,7 @@ hq = Headquarters()
 with open('data.csv', newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     next(csvreader)
+    print("Importing data...")
     for row in csvreader:
         point = DataHelper.pointify(row)
 
@@ -141,5 +181,7 @@ print(hq.fetch_lowest_temperature_station_date())
 print("OOP Solutions")
 print(hq.lowest_temperature_oop_solution())
 print(hq.fluctuation_station_oop_solution())
+
+print(hq.fetch_highest_fluctuation_station_id())
 
 print("Ready to go!")
