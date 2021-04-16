@@ -43,22 +43,29 @@ class DataHelper:
     def station_id(data_point):
         return data_point[0]
 
+    def parse(row):
+        # >>> row = ['2, 2020.123, 4']
+        # >>> parse(row)
+        # [2, 2020.123, 4]
+
+        row = row[0].split(',')
+        row = list(map(lambda item: float(item), row))
+
+        return row
+
 hq = Headquarters()
 
 with open('data.csv', newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     next(csvreader)
     for row in csvreader:
-        for data_point in row:
-            data_point = data_point.split(',')
-            data_point = list(map(lambda item: float(item), data_point))
+        data_point = DataHelper.parse(row)
+        station_id = DataHelper.station_id(data_point)
 
-            station_id = DataHelper.station_id(data_point)
+        if hq.already_has(station_id):
+            hq.add_data(station_id, data_point)
+        else:
+            new_station = hq.add_station(station_id, data_point)
+            new_station.add_data(data_point)
 
-            if hq.already_has(station_id):
-                hq.add_data(station_id, data_point)
-            else:
-                new_station = hq.add_station(station_id, data_point)
-                new_station.add_data(data_point)
-
-print("Ready to go!")
+print("Ready
