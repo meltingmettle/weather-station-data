@@ -1,6 +1,23 @@
 import csv
 import pdb
 
+class SolutionsAPI:
+    def part_1():
+        return hq.fetch_lowest_temperature_station_date()
+
+    def part_2():
+        return hq.fetch_highest_fluctuation_station_id()
+
+    def part_3(start, end):
+        # TODO add error handling/input validation
+        return hq.fetch_highest_fluctuation_station_id(start, end)
+
+    def part_1_v1():
+        return hq.lowest_temperature_oop_solution()
+
+    def part_2_v1():
+        return hq.fluctuation_station_oop_solution()
+
 class Headquarters:
     def __init__(self):
         self.stations = {}
@@ -21,7 +38,8 @@ class Headquarters:
             if station_lowest.temperature < lowest_recorded.temperature:
                 lowest_recorded = station_lowest
 
-        return {"Station ID:": lowest_recorded.station_id, "Date:":lowest_recorded.date}
+        print("The lowest temperature recorded is " + str(lowest_recorded.temperature) + " Celsius, recorded at Station " + str(lowest_recorded.station_id) + " on " + str(lowest_recorded.date))
+        return {"Station ID:": lowest_recorded.station_id, "Date:": lowest_recorded.date}
 
     # Assume that the data is not sorted.
     # I could also have stored the data in sorted arrays but the benefits would be only marginally worth the additional complexity
@@ -34,17 +52,17 @@ class Headquarters:
             if station_fluctuation.is_higher_than(highest_fluctuation) and station_fluctuation.is_over_the_same_window_as(highest_fluctuation):
                 highest_fluctuation = station_fluctuation
 
+        if highest_fluctuation.station_id == -1:
+            print("No data collected from the time window between " + str(start) + " and " + str(end))
+            return None
+            
         print("Station " + str(highest_fluctuation.station_id) + " saw the most temperature fluctuation of " + str(highest_fluctuation.value) + " between the dates of " + str(highest_fluctuation.start) + " and " + str(highest_fluctuation.end))
         return highest_fluctuation.station_id
 
-    # Import-based solutions for Part 1 and Part 2
-
-    # A simple solution which measures the lowest temperature as data is imported
-    # Re-implemented with an actual algorithm above
+    # Import-based solutions for Part 1 and Part 2 just for fun
     def lowest_temperature_oop_solution(self):
         return DataHelper.lowest_temperature_station_date()
 
-    # Another OOP solution
     def fluctuation_station_oop_solution(self):
         highest_station = Station(-1)
 
@@ -176,12 +194,18 @@ with open('data.csv', newline='') as csvfile:
         # 'sidecar-consumer' for Part 1's OOP solution
         DataHelper.consider_lowest(point)
 
-
-print(hq.fetch_lowest_temperature_station_date())
-print("OOP Solutions")
-print(hq.lowest_temperature_oop_solution())
-print(hq.fluctuation_station_oop_solution())
-
-print(hq.fetch_highest_fluctuation_station_id())
-
 print("Ready to go!")
+
+
+############ FOR TESTING CONVINIENCE, NOT PRODUCTIONIZABLE #####################
+while True:
+    part = input("Type a number between 1-3 to run the Part's corresponding method:")
+
+    if int(part) == 1:
+        SolutionsAPI.part_1()
+    elif int(part) == 2:
+        SolutionsAPI.part_2()
+    elif int(part) == 3:
+        start = input("Please input a correctly-formatted start date: ")
+        end = input("Please input a correctly-formatted end date: ")
+        SolutionsAPI.part_3(float(start), float(end))
