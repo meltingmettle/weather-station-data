@@ -1,8 +1,6 @@
 from solutions import *
 import csv
 
-hq = Headquarters()
-
 with open('data.csv', newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     next(csvreader)
