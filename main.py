@@ -61,7 +61,6 @@ class Headquarters:
             self.add_data(station_id, point)
         else:
             new_station = self.add_station(station_id, point)
-            new_station.add_data(point)
 
     def already_has(self, station_id):
         return station_id in self.stations
@@ -77,7 +76,7 @@ class Headquarters:
         self.get_station(station_id).add_data(point)
 
 class Station:
-    def __init__(self, station_id):
+    def __init__(self, station_id, station_data=[]):
         self.station_id           = int(station_id)
         self.station_data         = []
         # Instance attribute for the Part 2's import-based solution
@@ -103,7 +102,7 @@ class Station:
         aggregate_fluctuation = 0
 
         for point in self.station_data:
-            if start < point.date < end:
+            if start <= point.date <= end:
                 aggregate_fluctuation += abs(point.temperature)
 
         self.windowed_fluctuation = Fluctuation(self.station_id, start, end, aggregate_fluctuation)

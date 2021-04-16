@@ -1,5 +1,7 @@
 from main import *
 
+hq = Headquarters()
+
 class SolutionsAPI:
     def part_1():
         return hq.fetch_lowest_temperature_station_date()
