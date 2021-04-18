@@ -5,8 +5,6 @@ class Headquarters:
     def get_station(self, station_id):
         return self.stations[station_id]
 
-    ############### SCREENING QUESTION METHODS #################################
-
     def fetch_lowest_temperature_station_date(self):
         lowest_recorded = Point([-1, -1, float('inf')])
 
@@ -53,7 +51,7 @@ class Headquarters:
         print("Station " + str(highest_station.station_id) + " recorded the highest fluctuation of " + str(highest_station.fluctuation))
         return highest_station.station_id
 
-    ############### IMPORT METHODS ##############################################
+    ############### DATA IMPORT HELPERS ##############################################
 
     def add_point(self, point):
         station_id = point.station_id
@@ -105,8 +103,7 @@ class Station:
             if start <= point.date <= end:
                 aggregate_fluctuation += abs(point.temperature)
 
-        self.windowed_fluctuation = Fluctuation(self.station_id, start, end, aggregate_fluctuation)
-        return self.windowed_fluctuation
+        return Fluctuation(self.station_id, start, end, aggregate_fluctuation)
 
     def __repr__(self):
         return "Station " + str(int(self.station_id))
